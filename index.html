@@ -1,0 +1,43 @@
+<html>
+  <head> </head>
+  <body>
+    <!-- https://stackoverflow.com/questions/42825972/update-html-when-change-is-noticed-in-mysql-database -->
+    <!-- If we change this it will update to db and change html text/ We need a update function still. -->
+    <p id="name">Felix</p>
+    <div id="txtHint"><b>Person info will be listed here...</b></div>
+  </body>
+  <script>
+    function getTable() {
+      var xmlhttp = new XMLHttpRequest();
+      xmlhttp.onreadystatechange = function () {
+        if (this.readyState == 4 && this.status == 200) {
+          document.getElementById("txtHint").innerHTML = this.responseText;
+        }
+      };
+      xmlhttp.open("GET", "getTable.php", true);
+      xmlhttp.send();
+    }
+
+    function updateName() {
+      var xmlhttp = new XMLHttpRequest();
+      xmlhttp.onreadystatechange = function () {
+        if (this.readyState == 4 && this.status == 200) {
+          // Add input method here for the name
+          document.getElementById("test").innerHTML =
+            document.getElementById("name").textContent;
+        }
+      };
+      xmlhttp.open(
+        "POST",
+        "updateName.php?laeufer_name=" +
+          document.getElementById("name").textContent +
+          "&rfid=1",
+        true
+      );
+      xmlhttp.send();
+    }
+
+    getTable();
+    updateName();
+  </script>
+</html>
