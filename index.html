@@ -6,16 +6,13 @@
   <body>
     <!-- https://stackoverflow.com/questions/42825972/update-html-when-change-is-noticed-in-mysql-database -->
     <!-- If we change this it will update to db and change html text/ We need a update function still. -->
-    <p id="name">Felix</p>
     <div id="txtHint"><b>Person info will be listed here...</b></div>
     <div id="namechange">
       <h2>Schwimmernamen aendern</h2>
 
       <label for="swimmer">Schwimmer:</label>
       <!--CURRENTLY HERE NEED TO GRAB NAME AND RFID TO SEND TO SERVER-->
-      <select class="dropdown" onchange="getSwimmerRfid(this.value)">
-        <option value="volvo">Volvo</option>
-      </select>
+      <select class="dropdown" onchange="getSwimmerRfid(this.value)"></select>
       <form action="/action_page.php">
         <label for="newName">New Name:</label>
         <input type="text" id="newName" name="newName" /><br /><br />
@@ -24,8 +21,9 @@
     </div>
   </body>
   <script>
-    const rfidsArray = [];
-    const swimmerNames = [];
+    let rfidsArray = [];
+    let updatedRfidsArray = [];
+    let swimmerNames = [];
     let swimmerName;
     let swimmerRfid;
     // getTable and updateName work with xmlhttprequest and getRfid with ajax and a promise. First functions need refactor but work atm.
@@ -47,8 +45,16 @@
 
     function getSwimmerName() {
       swimmerName = document.getElementById("newName").value;
-      console.log(swimmerName);
-      updateName();
+      if (swimmerRfid != null && swimmerName != null) {
+        // document.querySelectorAll(
+        //   "#namechange > select > option[value=" + swimmerRfid + "]"
+        // )[1].text = "Value whatever";
+        console.log(swimmerName);
+
+        updateName();
+      } else {
+        alert("Please select a swimmer and enter a new name");
+      }
     }
 
     function updateName() {
@@ -66,7 +72,6 @@
       console.log(
         "updateName.php?laeufer_name=" + swimmerName + "&rfid=" + swimmerRfid
       );
-
       xmlhttp.send();
     }
 
@@ -106,25 +111,12 @@
       });
     }
 
-    // We need async aka promise to wait for the data to be loaded. FIXXX
-    getTable();
-    updateName();
-    //getRfidArray();
-    getRfids().then(function (data) {
-      for (let i = 0; i < data.length; i++) {
-        rfidsArray.push(data[i]);
-      }
-    });
-
-    getNames().then(function (data) {
-      for (let i = 0; i < data.length; i++) {
-        swimmerNames.push(data[i]);
-      }
-    });
-    // Waits for all promises to end.
-
     function loadDropdown() {
+      // Waits for all promises to end.
       Promise.all([getRfids(), getNames()]).then(function () {
+        $(".dropdown").empty();
+        $(".dropdown").append('<option value="">Select a swimmer</option>');
+
         for (let i = 0; i < rfidsArray.length; i++) {
           $(".dropdown").append(
             '<option value="' +
@@ -137,6 +129,43 @@
       });
     }
 
-    loadDropdown();
+    // We need async aka promise to wait for the data to be loaded. FIXXX
+    getTable();
+
+    getNames()
+      .then(function (data) {
+        for (let i = 0; i < data.length; i++) {
+          swimmerNames.push(data[i]);
+        }
+      })
+      .then(function () {
+        loadDropdown();
+      });
+
+    setInterval(function () {
+      updatedRfidsArray = [];
+      getRfids()
+        .then(function (data) {
+          for (let i = 0; i < data.length; i++) {
+            updatedRfidsArray.push(data[i]);
+          }
+        })
+        .then(function () {
+          console.log("up " + updatedRfidsArray);
+          console.log(rfidsArray);
+
+          rfidsArray = updatedRfidsArray;
+          updatedRfidsArray = [];
+          swimmerNames = [];
+          getTable();
+          getNames().then(function (data) {
+            for (let i = 0; i < data.length; i++) {
+              swimmerNames.push(data[i]);
+            }
+          });
+
+          loadDropdown();
+        });
+    }, 5000); // function will run every 5 seconds
   </script>
 </html>

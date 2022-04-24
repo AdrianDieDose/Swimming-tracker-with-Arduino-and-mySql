@@ -187,7 +187,7 @@ if ($con->connect_error) {
       echo "<td>".$row["bestzeit"]."</td>";
       //echo "<td>".$row["anfang_runde"]."</td>";
       echo "</tr>";
-      echo "<p class='hidden_rfid'>13134</p>";
+      
     }
     
   } else {
