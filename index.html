@@ -1,15 +1,33 @@
 <html>
   <head>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <style></style>
   </head>
   <body>
     <!-- https://stackoverflow.com/questions/42825972/update-html-when-change-is-noticed-in-mysql-database -->
     <!-- If we change this it will update to db and change html text/ We need a update function still. -->
     <p id="name">Felix</p>
     <div id="txtHint"><b>Person info will be listed here...</b></div>
+    <div id="namechange">
+      <h2>Schwimmernamen aendern</h2>
+
+      <label for="swimmer">Schwimmer:</label>
+      <!--CURRENTLY HERE NEED TO GRAB NAME AND RFID TO SEND TO SERVER-->
+      <select class="dropdown" onchange="getSwimmerRfid(this.value)">
+        <option value="volvo">Volvo</option>
+      </select>
+      <form action="/action_page.php">
+        <label for="newName">New Name:</label>
+        <input type="text" id="newName" name="newName" /><br /><br />
+        <input type="button" value="Submit" onclick="getSwimmerName()" />
+      </form>
+    </div>
   </body>
   <script>
     const rfidsArray = [];
+    const swimmerNames = [];
+    let swimmerName;
+    let swimmerRfid;
     // getTable and updateName work with xmlhttprequest and getRfid with ajax and a promise. First functions need refactor but work atm.
 
     function getTable() {
@@ -23,22 +41,32 @@
       xmlhttp.send();
     }
 
+    function getSwimmerRfid(rfid) {
+      swimmerRfid = rfid;
+    }
+
+    function getSwimmerName() {
+      swimmerName = document.getElementById("newName").value;
+      console.log(swimmerName);
+      updateName();
+    }
+
     function updateName() {
       var xmlhttp = new XMLHttpRequest();
       xmlhttp.onreadystatechange = function () {
         if (this.readyState == 4 && this.status == 200) {
-          // Add input method here for the name
-          document.getElementById("test").innerHTML =
-            document.getElementById("name").textContent;
+          getTable();
         }
       };
       xmlhttp.open(
         "POST",
-        "updateName.php?laeufer_name=" +
-          document.getElementById("name").textContent +
-          "&rfid=1",
+        "updateName.php?laeufer_name=" + swimmerName + "&rfid=" + swimmerRfid,
         true
       );
+      console.log(
+        "updateName.php?laeufer_name=" + swimmerName + "&rfid=" + swimmerRfid
+      );
+
       xmlhttp.send();
     }
 
@@ -60,17 +88,55 @@
       });
     }
 
+    function getNames() {
+      return new Promise(function (resolve, reject) {
+        $.ajax({
+          url: "getNames.php",
+          type: "GET",
+          dataType: "json",
+          beforeSend: function () {},
+          success: function (data) {
+            resolve(data); // Resolve promise and when success
+            //console.log(data);
+          },
+          error: function (err) {
+            reject(err); // Reject the promise and go to catch()
+          },
+        });
+      });
+    }
+
+    // We need async aka promise to wait for the data to be loaded. FIXXX
     getTable();
     updateName();
     //getRfidArray();
-    getRfids()
-      .then(function (data) {
-        while (data.length > 0) {
-          rfidsArray.push(data.pop());
+    getRfids().then(function (data) {
+      for (let i = 0; i < data.length; i++) {
+        rfidsArray.push(data[i]);
+      }
+    });
+
+    getNames().then(function (data) {
+      for (let i = 0; i < data.length; i++) {
+        swimmerNames.push(data[i]);
+      }
+    });
+    // Waits for all promises to end.
+
+    function loadDropdown() {
+      Promise.all([getRfids(), getNames()]).then(function () {
+        for (let i = 0; i < rfidsArray.length; i++) {
+          $(".dropdown").append(
+            '<option value="' +
+              rfidsArray[i] +
+              '">' +
+              swimmerNames[i] +
+              "</option>"
+          );
         }
-      })
-      .then(function () {
-        console.log("rfidsArray: " + rfidsArray);
       });
+    }
+
+    loadDropdown();
   </script>
 </html>
