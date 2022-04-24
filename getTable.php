@@ -178,8 +178,6 @@ if ($con->connect_error) {
 
   if ($result->num_rows > 0) {
     // output data of each row
-  
- 
     while($row = $result->fetch_assoc()) {
       echo "<tr>";
       //echo "<td>".$row["rfid"]."</td>";
@@ -191,9 +189,7 @@ if ($con->connect_error) {
       echo "</tr>";
       echo "<p class='hidden_rfid'>13134</p>";
     }
-    while($row = $result->fetch_assoc()) {
-      echo "id: " . $row["rfid"]. " - laeufer_name: " . $row["laeufer_name"]. " -rundenanzahl: " . $row["rundenanzahl"]. " -letzte_rundenzeit: " . $row["letzte_rundenzeit"]." -bestzeit: " . $row["bestzeit"]. " -anfang_runde: " . $row["anfang_runde"]. "<br>";
-    }
+    
   } else {
     echo "0 results";
   }
