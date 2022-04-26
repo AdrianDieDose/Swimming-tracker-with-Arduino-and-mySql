@@ -13,11 +13,10 @@
       <label for="swimmer">Schwimmer:</label>
       <!--CURRENTLY HERE NEED TO GRAB NAME AND RFID TO SEND TO SERVER-->
       <select class="dropdown" onchange="getSwimmerRfid(this.value)"></select>
-      <form action="/action_page.php">
-        <label for="newName">Neuer Name:</label>
-        <input type="text" id="newName" name="newName" /><br /><br />
-        <input type="button" value="Submit" onclick="getSwimmerName()" />
-      </form>
+
+      <label for="newName">Neuer Name:</label>
+      <input type="text" id="newName" name="newName" /><br /><br />
+      <input type="button" value="Submit" onclick="getSwimmerName()" />
     </div>
   </body>
   <script>
@@ -45,7 +44,7 @@
 
     function getSwimmerName() {
       swimmerName = document.getElementById("newName").value;
-      if (swimmerRfid != null && swimmerName != null) {
+      if (swimmerRfid != null || swimmerName != null) {
         // document.querySelectorAll(
         //   "#namechange > select > option[value=" + swimmerRfid + "]"
         // )[1].text = "Value whatever";

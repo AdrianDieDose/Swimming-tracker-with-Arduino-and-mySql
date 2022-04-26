@@ -32,8 +32,7 @@ if ($con->connect_error) {
 
 
 
-//localhost/wlan/get_data.php
-http://localhost/wlan/update.php?rfid=3
+//localhost/wlan/get_data.php http://localhost/wlan/update.php?rfid=3
 
 //rundenzahl
 //letzte_rundenzeit
