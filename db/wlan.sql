@@ -43,21 +43,8 @@ CREATE TABLE `rundenzeiten` (
   PRIMARY KEY (`rfid`,`runde`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
-/*Data for the table `rundenzeiten` */
 
-insert  into `rundenzeiten`(`rfid`,`rundenzeit`,`runde`) values 
-(1,'00:00:00',1),
-(1,'06:48:56',2),
-(1,'00:00:13',3),
-(3,'00:00:00',1),
-(3,'00:02:49',2),
-(3,'00:00:11',3),
-(4,'00:00:00',1),
-(4,'00:00:38',2),
-(5,'00:00:00',1),
-(6,'00:00:00',1),
-(6,'00:00:21',2),
-(8,'00:00:00',1);
+
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
